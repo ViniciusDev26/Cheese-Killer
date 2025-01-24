@@ -11,15 +11,24 @@ canvas{
     cursor: none;
     background-color: white;
 }
-
-.placar{
-    display: flex;
+.placar {
+    display: inline-flex; /* Permite que o fundo tenha o tamanho do conteúdo */
     justify-content: center;
+    background-color: rgba(255, 215, 0, 0.8); /* Fundo dourado transparente */
+    padding: 10px 20px;
+    border-radius: 10px; /* Bordas arredondadas */
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.8); /* Sombra para destacar */
+    margin: 10px 0; /* Um pouco de espaçamento para não ficar grudado na tela */
 }
-.placar p{
-    padding: 5px;
 
+.placar p {
+    padding: 5px;
+    font-size: 1.5rem; /* Tamanho da fonte maior */
+    color: white; /* Texto branco para contraste */
+    font-weight: bold; /* Deixa o texto mais forte */
+    margin: 0; /* Remove margens automáticas */
 }
+
 
 body{
     background-image: url('https://static.vecteezy.com/ti/vetor-gratis/p1/7201452-padrao-de-fundo-de-queijo-vetor.jpg');

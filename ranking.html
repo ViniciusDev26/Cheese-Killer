@@ -69,16 +69,31 @@
                 <th scope="col">Pontuation</th>
             </tr>
         </thead>
-        <tbody>
-            <tr>
-                <th scope="row">Player1</th>
-                <td>1200</td>
-            </tr>
+        <tbody id="rankingBody">
+           <!-- Dados do ranking serão inseridos aqui -->
         </tbody>
       </table>
     </div>
     <div class="back">
     <a href="index.html"><- BACK</a>
   </div>
+
+  <script>
+    window.onload = function(){
+      const maxPontos = localStorage.getItem('maxPontos');
+      const rankingBody = document.querySelector('#rankingBody');
+
+      if(maxPontos){
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `<th scope='row'>Player1</th><td>${maxPontos}</td>`;
+        rankingBody.appendChild(newRow);
+        
+      }else{
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `<th scope="row">No scores yet</th><td>-</td>`;
+        rankingBody.appendChild(newRow);
+      }
+    }
+  </script>
 </body>
 </html>
