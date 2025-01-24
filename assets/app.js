@@ -5,12 +5,24 @@
  let count = 0;
  let countLife = 3;
 
-     const ALTURA_JOGO = 300;
-     const LARGURA_JOGO = 700; 
-     const ding = new Audio();
-     ding.src = 'sounds/784428__erokia__msfxp13-43_3-ambient-90-bpm.wav'
-     ding.preload = 'auto';
+ let balaRestante = 11; // Quantidade inicial de balas
+ const maxBalas = 11;   // Máximo de balas que o jogador pode carregar
+ let recarregando = false; // Estado para verificar se o jogador está recarregando
+ 
+
+ const ALTURA_JOGO = 300;
+ const LARGURA_JOGO = 700; 
+ const ding = new Audio();
+ ding.src = 'sounds/784428__erokia__msfxp13-43_3-ambient-90-bpm.wav'
+ ding.preload = 'auto';
     
+ const death = new Audio();
+ death.src = 'sounds/506587__mrthenoronha__kill-enemy-2-8-bit.wav'
+ death.preload = 'auto'
+
+ const kill = new Audio();
+ kill.src = 'sounds/506585__mrthenoronha__kill-enemy-4-8-bit.wav'
+ kill.preload = 'auto'
 
 
      class Sprite{
@@ -112,6 +124,7 @@
  let cheese = new Sprite(50,50,64,64,imagem);
  let allMeteor = [];  
  let allShots = [];
+
  allMeteor.push(new Meteoro(meteoroImg));
  allMeteor.push(new Meteoro(meteoroImg));
  allMeteor.push(new Meteoro(meteoroImg));
@@ -211,13 +224,13 @@
              if(tiroAtingiuMeteoro){
                 tiro.podeSerDestruido = true;
                 meteoro.destruir();
-                const death = new Audio();
-                death.src = 'sounds/506587__mrthenoronha__kill-enemy-2-8-bit.wav'
-                death.preload = 'auto'
+                death.currentTime = 0; // Reinicia o áudio para o início
                 death.play(); 
-                 count++;
-                 placar.innerHTML = count;
-                 
+                count++;
+                placar.innerHTML = count;
+                if(count % 100 === 0){
+                    meteoro.velocidadeX *= 1.5;
+                }
              }
          }
      }
@@ -238,7 +251,7 @@
      desenhaJogo();
 
      // (Opcional) Mostre uma mensagem de reinício
-     alert('O jogo foi reiniciado!');
+     alert('You died, the game will restart!');
  }
 
  function atualizaLogicaDoJogo(){
@@ -254,13 +267,19 @@
  setInterval(atualizaLogicaDoJogo,33);
 
  function darTiro(){
-     let tiro = new Shot(cheese,shotImg);
-     allShots.push(tiro);
-     const kill = new Audio();
-     kill.src = 'sounds/506585__mrthenoronha__kill-enemy-4-8-bit.wav'
-     kill.preload = 'auto'
-     kill.play()
- }
+    if (balaRestante > 0 && !recarregando) {
+        let tiro = new Shot(cheese,shotImg);
+        allShots.push(tiro);
+        kill.play();
+        balaRestante--; 
+        atualizarPlacarBalas();
+
+    }else if(balaRestante === 0 && !recarregando){
+        console.log("Sem balas! Recarga necessária.");
+        iniciarRecarga();
+    }
+}
+ 
 
  document.body.addEventListener('keydown', e =>{
      if(e.key == ' '){
@@ -268,4 +287,23 @@
          darTiro();
      }
  });
+
+ function atualizarPlacarBalas(){
+        const placarBalas = document.querySelector('.allBalas');
+        placarBalas.innerHTML = balaRestante;
+ }
+
+ function iniciarRecarga(){
+    recarregando = true;
+    console.log("Recarregando...");
+
+    setTimeout(() =>{
+        balaRestante = maxBalas;
+        recarregando = false;
+        atualizarPlacarBalas();
+        console.log("Recarga completa!");
+    },2000);
+    
+    
+ }
 
