@@ -33,6 +33,22 @@
         body{
             background-image: url('https://static.vecteezy.com/ti/vetor-gratis/p1/7201452-padrao-de-fundo-de-queijo-vetor.jpg');
         }
+        .back{
+            margin-top: 10px;
+            padding: 10px;
+          }
+
+          .back a{
+            text-decoration: none;
+            list-style-type: none;
+            padding: 10px;
+            background-color: yellow;
+            border-radius: 10px;
+            color: black;
+          }
+          .back a:hover{
+            background-color: rgb(211, 211, 36);
+          }
     </style>
    
 </head>
@@ -49,11 +65,16 @@
     </div>
 
 
+
     <!--TELA DE PINTURA = Permite a desenhar nele -->
     <canvas  id="game" width="700" height="300"></canvas>
 
     <div class="">
 
+    </div>
+    <div class="back">
+        <a href="index.html"><-BACK</a>
+        <a href="ranking.html">RANKING</a>
     </div>
 
 <script>
