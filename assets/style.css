@@ -1,0 +1,42 @@
+*{
+    text-align: center;
+}
+
+canvas{
+    border: 1px solid red;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    image-rendering: pixelated; /* pixela a imagem */
+    cursor: none;
+    background-color: white;
+}
+
+.placar{
+    display: flex;
+    justify-content: center;
+}
+.placar p{
+    padding: 5px;
+
+}
+
+body{
+    background-image: url('https://static.vecteezy.com/ti/vetor-gratis/p1/7201452-padrao-de-fundo-de-queijo-vetor.jpg');
+}
+.back{
+    margin-top: 10px;
+    padding: 10px;
+  }
+
+  .back a{
+    text-decoration: none;
+    list-style-type: none;
+    padding: 10px;
+    background-color: yellow;
+    border-radius: 10px;
+    color: black;
+  }
+  .back a:hover{
+    background-color: rgb(211, 211, 36);
+  }
