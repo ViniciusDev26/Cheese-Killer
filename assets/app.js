@@ -1,4 +1,7 @@
+const nomeJogador = prompt('Digite seu nome');
+const player = document.querySelector('#player');
 
+player.innerHTML = nomeJogador;
  //placar
  let placar = document.querySelector('.pontuacao');
  let vidas = document.querySelector('.vida');
@@ -323,7 +326,7 @@ function salvarPontuacao(nome,pontos){
 }   
 
 function fimDoJogo(){
-    const nomeJogador = prompt('Digite seu nome');
+   
     salvarPontuacao(nomeJogador,count);
     alert('Pontuação salva, confira no ranking!');
     window.location.href = "ranking.html";
