@@ -232,7 +232,7 @@ player.innerHTML = nomeJogador;
                 death.play(); 
                 count++;
                 placar.innerHTML = count;
-                if(count % 100 === 0){
+                if(count % 30 === 0){
                     meteoro.velocidadeX *= 1.5;
                 }
              }
