@@ -132,6 +132,7 @@
 
  imagem.addEventListener('load',()=>{
     desenhaJogo();
+    salvarDados();
 
  });
 
@@ -236,6 +237,7 @@
      }
  }
  function reiniciarJogo(){
+    fimDoJogo();
      countLife = 3;
      count = 0;
      vidas.innerHTML = countLife;
@@ -307,3 +309,22 @@
     
  }
 
+function salvarDados(){
+    localStorage.setItem('pontos',count);
+}
+
+function salvarPontuacao(nome,pontos){
+    const ranking = JSON.parse(localStorage.getItem('ranking')) || [];
+    ranking.push({nome, pontos});
+    ranking.sort((a,b) => b.pontos - a.pontos);
+    localStorage.setItem('ranking', JSON.stringify(ranking));
+
+
+}   
+
+function fimDoJogo(){
+    const nomeJogador = prompt('Digite seu nome');
+    salvarPontuacao(nomeJogador,count);
+    alert('Pontuação salva, confira no ranking!');
+    window.location.href = "ranking.html";
+}

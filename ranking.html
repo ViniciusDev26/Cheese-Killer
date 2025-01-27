@@ -79,21 +79,26 @@
   </div>
 
   <script>
-    window.onload = function(){
-      const maxPontos = localStorage.getItem('maxPontos');
+    window.onload = function () {
+      // Obtém os dados do ranking do localStorage
+      const ranking = JSON.parse(localStorage.getItem('ranking')) || [];
+  
+      // Seleciona o corpo da tabela onde o ranking será exibido
       const rankingBody = document.querySelector('#rankingBody');
-
-      if(maxPontos){
-        const newRow = document.createElement('tr');
-        newRow.innerHTML = `<th scope='row'>Player1</th><td>${maxPontos}</td>`;
-        rankingBody.appendChild(newRow);
-        
-      }else{
-        const newRow = document.createElement('tr');
-        newRow.innerHTML = `<th scope="row">No scores yet</th><td>-</td>`;
-        rankingBody.appendChild(newRow);
+  
+      if (ranking.length > 0) {
+          ranking.forEach((entry) => {
+              const newRow = document.createElement('tr');
+              newRow.innerHTML = `<th scope='row'>${entry.nome}</th><td>${entry.pontos}</td>`;
+              rankingBody.appendChild(newRow);
+          });
+      } else {
+          // Exibe mensagem se não houver pontuações salvas
+          const newRow = document.createElement('tr');
+          newRow.innerHTML = `<th scope="row">No scores yet</th><td>-</td>`;
+          rankingBody.appendChild(newRow);
       }
-    }
+  };
   </script>
 </body>
 </html>
