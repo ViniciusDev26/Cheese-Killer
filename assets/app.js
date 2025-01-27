@@ -1,7 +1,11 @@
-const nomeJogador = prompt('Digite seu nome');
-const player = document.querySelector('#player');
+ let tempo = 0;
+ const tempoJogo = document.querySelector('.tempo');
 
-player.innerHTML = nomeJogador;
+
+ const nomeJogador = prompt('Digite seu nome');
+ const player = document.querySelector('#player');
+
+ player.innerHTML = nomeJogador;
  //placar
  let placar = document.querySelector('.pontuacao');
  let vidas = document.querySelector('.vida');
@@ -233,7 +237,7 @@ player.innerHTML = nomeJogador;
                 count++;
                 placar.innerHTML = count;
                 if(count % 30 === 0){
-                    meteoro.velocidadeX *= 1.5;
+                    meteoro.velocidadeX *= 2.0;
                 }
              }
          }
@@ -331,3 +335,14 @@ function fimDoJogo(){
     alert('Pontuação salva, confira no ranking!');
     window.location.href = "ranking.html";
 }
+
+function aumentarInimigos(){
+    tempo += 1;
+
+    if(tempo % 10 === 0){
+        allMeteor.push(new Meteoro(meteoroImg));
+    }
+    tempoJogo.innerHTML = tempo;
+}
+
+setInterval(aumentarInimigos, 1000);
