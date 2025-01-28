@@ -12,8 +12,8 @@
  let count = 0;
  let countLife = 3;
 
- let balaRestante = 11; // Quantidade inicial de balas
- const maxBalas = 11;   // Máximo de balas que o jogador pode carregar
+ let balaRestante = 20; // Quantidade inicial de balas
+ const maxBalas = 20;   // Máximo de balas que o jogador pode carregar
  let recarregando = false; // Estado para verificar se o jogador está recarregando
  
 
@@ -113,9 +113,59 @@
          }
      }
 
+     class PowerUps extends Sprite{
+        constructor(x,y,largura,altura,imagem,tipo,duracao){
+            super(x,y,largura,altura,imagem);
+            this.tipo = tipo;
+            this.duracao = duracao;
+            this.ativo = true;
+        }
+
+        AplicarEfeito(jogador){
+            console.log(`Efeito do tipo ${this.tipo}`)
+            if(this.tipo === 'imunidade'){
+                jogador.imune = true;
+                console.log("Jogador está imune!");
+                setTimeout(() => {
+                    jogador.imune = false
+                    console.log("Imunidade acabou!");
+            },this.duracao);
+            }else if(this.tipo === 'velocidade'){
+                jogador.velocidadeX *= 2;
+                console.log("Velocidade aumentada!");
+                setTimeout(() => {
+                    jogador.velocidade /= 2
+                    console.log("Velocidade normal")
+                },this.duracao);
+            }else if(this.tipo === "pontuacao-extra"){
+                jogador.pontos += 50;
+                count += 50;
+                console.log("Ganhou 50 pontos extras!");
+                placar.innerHTML = count;
+            }
+        }
+
+        desenhar(ctx) {
+            super.desenha(ctx); // Usa o método da classe pai
+        }
+
+        colidiuCom(jogador) {
+            // Verifica se houve colisão com o jogador
+            return (
+                jogador.x < this.x + this.largura &&
+                jogador.x + jogador.largura > this.x &&
+                jogador.y < this.y + this.altura &&
+                jogador.y + jogador.altura > this.y
+            );
+        }
+     }
+     
+
 
  let canvasEl = document.querySelector('#game');
  let ctx = canvasEl.getContext('2d');
+
+
 
  let imagem = new Image();
  imagem.src = 'image/download-removebg-preview.png'
@@ -129,8 +179,15 @@
  ctx.imageSmoothingEnabled = false;
 
  let cheese = new Sprite(50,50,64,64,imagem);
+
+ cheese.imune = false;      // Define imunidade inicial
+ cheese.velocidadeX = 2;    // Velocidade inicial para PowerUps de velocidade
+ cheese.pontos = 0;  
+
  let allMeteor = [];  
  let allShots = [];
+ let allPowerUp = [];
+
 
  allMeteor.push(new Meteoro(meteoroImg));
  allMeteor.push(new Meteoro(meteoroImg));
@@ -175,6 +232,8 @@
 
 
      allShots.forEach(shot => shot.desenha(ctx));
+
+     desenharPowerUps(ctx);
 
  }
 
@@ -245,6 +304,7 @@
  }
  function reiniciarJogo(){
     fimDoJogo();
+    allPowerUp = [];
      countLife = 3;
      count = 0;
      vidas.innerHTML = countLife;
@@ -267,7 +327,7 @@
      atualizaInimigos();
      atualizaTiros();
      verificaColision();
-
+     verificaColisionPowerUps();
 
      //redesenha o jogo 
      desenhaJogo();
@@ -346,3 +406,64 @@ function aumentarInimigos(){
 }
 
 setInterval(aumentarInimigos, 1000);
+
+
+
+const imagensPowerUp = {
+    imunidade: "image/imunidade-removebg-preview.png",
+    dobro: "image/dobro-removebg-preview.png",
+    velo: "image/velo-removebg-preview.png"
+}
+
+function randomPowerUp(){
+    const tipos = Object.keys(imagensPowerUp);
+
+    if (tipos.length === 0) {
+        console.error("Nenhum tipo de PowerUp definido em 'imagensPowerUp'.");
+        return null; // Retorna null caso não haja PowerUps
+    }
+
+    const tipoAleatorio = tipos[Math.floor(Math.random() * tipos.length)];
+
+    const imagem = new Image();
+    imagem.src = imagensPowerUp[tipoAleatorio];
+
+    return new PowerUps(
+        Math.random() * canvasEl.width,
+        Math.random() * canvasEl.height,
+        30,
+        30,
+        imagem,
+        tipoAleatorio,
+        5000
+    );
+}
+
+
+
+
+function addPowerUp(){
+    const novoPowerUp = randomPowerUp();
+    if (novoPowerUp) {
+        allPowerUp.push(novoPowerUp);
+    } else {
+        console.warn("Falha ao criar PowerUp. Nenhum foi adicionado.");
+    }
+}
+
+setInterval(addPowerUp,10000);
+
+
+function desenharPowerUps(ctx) {
+    allPowerUp.forEach((powerUp) => powerUp.desenhar(ctx));
+}
+
+function verificaColisionPowerUps() {
+    allPowerUp = allPowerUp.filter((powerUp) => {
+        if (powerUp.colidiuCom(cheese)) {
+            powerUp.AplicarEfeito(cheese); // Aplica o efeito ao jogador
+            return false; // Remove o PowerUp consumido
+        }
+        return true; // Mantém o restante
+    });
+}
