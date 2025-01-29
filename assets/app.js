@@ -1,9 +1,5 @@
- 
- 
- 
  let tempo = 0;
  const tempoJogo = document.querySelector('.tempo');
-
 
  const nomeJogador = prompt('Digite seu nome');
  const player = document.querySelector('#player');
@@ -135,13 +131,14 @@
                     console.log("Imunidade acabou!");
             },this.duracao);
         } else if (this.tipo === "tiro-triplo") {
-                jogador.tiroTriploAtivo = true; // Ativa o tiro triplo
-                console.log("Tiro triplo ativado!");
-    
-                setTimeout(() => {
-                    jogador.tiroTriploAtivo = false; // Desativa o tiro triplo
-                    console.log("Tiro triplo desativado!");
-                }, this.duracao);
+            console.log("Ativando tiro-triplo")
+            jogador.tiroTriploAtivo = true; // Ativa o efeito de tiro triplo
+            console.log("Tiro triplo ativado!");
+        
+            setTimeout(() => {
+                jogador.tiroTriploAtivo = false; // Desativa o tiro triplo
+                console.log("Tiro triplo desativado!");
+            }, this.duracao); // Duração de 5 segundos ou o valor definido
             }else if(this.tipo === "pontuacao-extra"){
                 jogador.pontos += 50; // Agora soma 50 pontos corretamente
                 count += 50; // Soma no placar global também
@@ -157,7 +154,6 @@
             console.log(`Efeito do tipo ${this.tipo} aplicado.`);
             console.log("📌 Estado do jogador após o PowerUp:", {
                 imune: jogador.imune,
-                velocidadeX: jogador.velocidadeX,
                 pontos: jogador.pontos
             });
             
@@ -178,8 +174,6 @@
         }
      }
      
-
-
  let canvasEl = document.querySelector('#game');
  let ctx = canvasEl.getContext('2d');
 
@@ -316,7 +310,7 @@
                 death.currentTime = 0; // Reinicia o áudio para o início
                 death.play(); 
                 count++;
-                placar.innerHTML = count;
+                placar.innerText = count;
                 if(count % 30 === 0){
                     meteoro.velocidadeX *= 2.0;
                 }
@@ -324,13 +318,15 @@
          }
      }
  }
+
+
  function reiniciarJogo(){
     fimDoJogo();
     allPowerUp = [];
      countLife = 3;
      count = 0;
      vidas.innerHTML = countLife;
-     placar.innerHTML = count;
+     placar.innerText = count;
 
        // Reposiciona os meteoros
      allMeteor.forEach(meteoro => meteoro.destruir());
@@ -388,7 +384,6 @@
         iniciarRecarga();
     }
 }
- 
 
  document.body.addEventListener('keydown', e =>{
      if(e.key == ' '){
@@ -399,7 +394,7 @@
 
  function atualizarPlacarBalas(){
         const placarBalas = document.querySelector('.allBalas');
-        placarBalas.innerHTML = balaRestante;
+        placarBalas.innerText = balaRestante;
  }
 
  function iniciarRecarga(){
@@ -412,8 +407,6 @@
         atualizarPlacarBalas();
         console.log("Recarga completa!");
     },2000);
-    
-    
  }
 
 function salvarDados(){
@@ -425,12 +418,9 @@ function salvarPontuacao(nome,pontos){
     ranking.push({nome, pontos});
     ranking.sort((a,b) => b.pontos - a.pontos);
     localStorage.setItem('ranking', JSON.stringify(ranking));
-
-
 }   
 
 function fimDoJogo(){
-   
     salvarPontuacao(nomeJogador,count);
     alert('Pontuação salva, confira no ranking!');
     window.location.href = "ranking.html";
@@ -446,8 +436,6 @@ function aumentarInimigos(){
 }
 
 setInterval(aumentarInimigos, 1000);
-
-
 
 const imagensPowerUp = {
     imunidade: "image/imunidade-removebg-preview.png",
@@ -481,9 +469,6 @@ function randomPowerUp(){
         5000
     );
 }
-
-
-
 
 function addPowerUp(){
     const novoPowerUp = randomPowerUp();
@@ -525,5 +510,3 @@ setTimeout(() => {
     cheese.imune = false;
     console.log("❌ Imunidade desativada!");
 }, 5000);
-
-
