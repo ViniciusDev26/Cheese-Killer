@@ -1,3 +1,6 @@
+ 
+ 
+ 
  let tempo = 0;
  const tempoJogo = document.querySelector('.tempo');
 
@@ -122,7 +125,8 @@
         }
 
         AplicarEfeito(jogador){
-            console.log(`Efeito do tipo ${this.tipo}`)
+            console.log(`Efeito do tipo ${this.tipo}`);
+
             if(this.tipo === 'imunidade'){
                 jogador.imune = true;
                 console.log("Jogador está imune!");
@@ -130,19 +134,33 @@
                     jogador.imune = false
                     console.log("Imunidade acabou!");
             },this.duracao);
-            }else if(this.tipo === 'velocidade'){
-                jogador.velocidadeX *= 2;
-                console.log("Velocidade aumentada!");
+        } else if (this.tipo === "tiro-triplo") {
+                jogador.tiroTriploAtivo = true; // Ativa o tiro triplo
+                console.log("Tiro triplo ativado!");
+    
                 setTimeout(() => {
-                    jogador.velocidade /= 2
-                    console.log("Velocidade normal")
-                },this.duracao);
+                    jogador.tiroTriploAtivo = false; // Desativa o tiro triplo
+                    console.log("Tiro triplo desativado!");
+                }, this.duracao);
             }else if(this.tipo === "pontuacao-extra"){
-                jogador.pontos += 50;
-                count += 50;
+                jogador.pontos += 50; // Agora soma 50 pontos corretamente
+                count += 50; // Soma no placar global também
                 console.log("Ganhou 50 pontos extras!");
-                placar.innerHTML = count;
+            
+                if (placar) {
+                    placar.innerText = count;
+                } else {
+                    console.warn("Elemento do placar não encontrado!")
+                }
             }
+
+            console.log(`Efeito do tipo ${this.tipo} aplicado.`);
+            console.log("📌 Estado do jogador após o PowerUp:", {
+                imune: jogador.imune,
+                velocidadeX: jogador.velocidadeX,
+                pontos: jogador.pontos
+            });
+            
         }
 
         desenhar(ctx) {
@@ -181,7 +199,7 @@
  let cheese = new Sprite(50,50,64,64,imagem);
 
  cheese.imune = false;      // Define imunidade inicial
- cheese.velocidadeX = 2;    // Velocidade inicial para PowerUps de velocidade
+ cheese.tiroTriploAtivo = false; // Define o estado inicial corretamente
  cheese.pontos = 0;  
 
  let allMeteor = [];  
@@ -267,6 +285,7 @@
      for(let meteoros of allMeteor){
          const atingiuCheese = meteoros.colision(cheese);
          if(atingiuCheese){
+            if (!cheese.imune) { // Agora respeita a imunidade
              meteoros.destruir();
              const pain = new Audio();
              pain.src = 'sounds/29617__erdie__pain-male2.ogg'
@@ -278,11 +297,14 @@
              if(countLife <= 0){
                  reiniciarJogo();
                  break;
+             }else{
+                console.log("Jogador está imune!!!")
              }
              
          }
 
      }
+    }
 
      // verificar colisão tiros e meteoros
      for(let meteoro of allMeteor){
@@ -337,14 +359,32 @@
 
  function darTiro(){
     if (balaRestante > 0 && !recarregando) {
-        let tiro = new Shot(cheese,shotImg);
-        allShots.push(tiro);
-        kill.play();
-        balaRestante--; 
-        atualizarPlacarBalas();
+        console.log("🔫 Tentando atirar...");
+        console.log("🛠 Tiro triplo ativo?", cheese.tiroTriploAtivo);
 
-    }else if(balaRestante === 0 && !recarregando){
-        console.log("Sem balas! Recarga necessária.");
+        if (cheese.tiroTriploAtivo) {
+            console.log("🔥 Ativando tiro triplo!");
+
+            let tiro1 = new Shot(cheese, shotImg);
+            let tiro2 = new Shot(cheese, shotImg);
+            let tiro3 = new Shot(cheese, shotImg);
+
+            tiro2.y += 10;  // Pequeno deslocamento
+            tiro3.y -= 10;
+
+            allShots.push(tiro1, tiro2, tiro3);
+            kill.play();
+        } else {
+            console.log("💥 Tiro normal!");
+            let tiro = new Shot(cheese, shotImg);
+            allShots.push(tiro);
+            kill.play();
+        }
+
+        balaRestante--;
+        atualizarPlacarBalas();
+    } else if (balaRestante === 0 && !recarregando) {
+        console.log("❌ Sem balas! Recarga necessária.");
         iniciarRecarga();
     }
 }
@@ -412,7 +452,7 @@ setInterval(aumentarInimigos, 1000);
 const imagensPowerUp = {
     imunidade: "image/imunidade-removebg-preview.png",
     dobro: "image/dobro-removebg-preview.png",
-    velo: "image/velo-removebg-preview.png"
+    tiroTriplo: "image/tiro-triplo-removebg-preview.png"
 }
 
 function randomPowerUp(){
@@ -424,7 +464,10 @@ function randomPowerUp(){
     }
 
     const tipoAleatorio = tipos[Math.floor(Math.random() * tipos.length)];
-
+    if(!tipoAleatorio){
+        console.warn("Nenhum foi selecionado");
+        return null;
+    }
     const imagem = new Image();
     imagem.src = imagensPowerUp[tipoAleatorio];
 
@@ -449,6 +492,8 @@ function addPowerUp(){
     } else {
         console.warn("Falha ao criar PowerUp. Nenhum foi adicionado.");
     }
+
+    console.log("Novo PowerUp criado:", novoPowerUp.tipo);
 }
 
 setInterval(addPowerUp,10000);
@@ -459,11 +504,26 @@ function desenharPowerUps(ctx) {
 }
 
 function verificaColisionPowerUps() {
-    allPowerUp = allPowerUp.filter((powerUp) => {
+    for (let i = 0; i < allPowerUp.length; i++) {
+        const powerUp = allPowerUp[i];
         if (powerUp.colidiuCom(cheese)) {
-            powerUp.AplicarEfeito(cheese); // Aplica o efeito ao jogador
-            return false; // Remove o PowerUp consumido
+            console.log("⚡ Colisão detectada com PowerUp:", powerUp.tipo);
+            powerUp.AplicarEfeito(cheese); // Certifique-se de que cheese está sendo passado corretamente
+            allPowerUp.splice(i, 1); // Remove o PowerUp da lista
+            break; // Evita problemas ao modificar o array enquanto ele é percorrido
         }
-        return true; // Mantém o restante
-    });
+    }
+
+    console.log("Checando colisão com PowerUps... Total:", allPowerUp.length);
+
 }
+
+cheese.imune = true;
+console.log("✅ Jogador ficou imune!");
+
+setTimeout(() => {
+    cheese.imune = false;
+    console.log("❌ Imunidade desativada!");
+}, 5000);
+
+
