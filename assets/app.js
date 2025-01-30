@@ -138,17 +138,20 @@
             setTimeout(() => {
                 jogador.tiroTriploAtivo = false; // Desativa o tiro triplo
                 console.log("Tiro triplo desativado!");
-            }, this.duracao); // Duração de 5 segundos ou o valor definido
-            }else if(this.tipo === "pontuacao-extra"){
-                jogador.pontos += 50; // Agora soma 50 pontos corretamente
-                count += 50; // Soma no placar global também
-                console.log("Ganhou 50 pontos extras!");
-            
-                if (placar) {
+            }, 10000); // Duração de 5 segundos ou o valor definido
+        } else if (this.tipo === "pontuacao-extra") {
+            jogador.pontos += 50; // Soma 50 pontos corretamente
+            count += 50; // Atualiza o placar global
+            console.log("🎯 Ganhou 50 pontos extras!");
+        
+            if (placar) {
+                setTimeout(() => { // Pequeno atraso para garantir a atualização
                     placar.innerText = count;
-                } else {
-                    console.warn("Elemento do placar não encontrado!")
-                }
+                    console.log("📊 Placar atualizado:", count);
+                }, 100);
+            } else {
+                console.warn("⚠️ Elemento do placar não encontrado!");
+            }
             }
 
             console.log(`Efeito do tipo ${this.tipo} aplicado.`);
@@ -221,7 +224,7 @@
  function desenhaJogo(){
 
      
-     ding.play();
+    //  ding.play();
      // apaga o canvas
      ctx.clearRect(0,0,canvasEl.width, canvasEl.height);
 
