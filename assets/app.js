@@ -131,14 +131,13 @@
                     console.log("Imunidade acabou!");
             },this.duracao);
         } else if (this.tipo === "tiro-triplo") {
-            console.log("Ativando tiro-triplo")
-            jogador.tiroTriploAtivo = true; // Ativa o efeito de tiro triplo
-            console.log("Tiro triplo ativado!");
+                console.log("🔥 Ativando tiro triplo!");
+                jogador.tiroTriploAtivo = true;
         
-            setTimeout(() => {
-                jogador.tiroTriploAtivo = false; // Desativa o tiro triplo
-                console.log("Tiro triplo desativado!");
-            }, 10000); // Duração de 5 segundos ou o valor definido
+                setTimeout(() => {
+                    jogador.tiroTriploAtivo = false;
+                    console.log("❌ Tiro triplo desativado!");
+                }, this.duracao); // 10 segundos
         } else if (this.tipo === "pontuacao-extra") {
             jogador.pontos += 50; // Soma 50 pontos corretamente
             count += 50; // Atualiza o placar global
@@ -357,29 +356,29 @@
  setInterval(atualizaLogicaDoJogo,33);
 
  function darTiro(){
+
     if (balaRestante > 0 && !recarregando) {
         console.log("🔫 Tentando atirar...");
-        console.log("🛠 Tiro triplo ativo?", cheese.tiroTriploAtivo);
 
+        console.log("Tiro triplo ativo:",cheese.tiroTriploAtivo)
         if (cheese.tiroTriploAtivo) {
-            console.log("🔥 Ativando tiro triplo!");
+            console.log("🔥 Disparando tiro triplo!");
 
             let tiro1 = new Shot(cheese, shotImg);
             let tiro2 = new Shot(cheese, shotImg);
             let tiro3 = new Shot(cheese, shotImg);
 
-            tiro2.y += 10;  // Pequeno deslocamento
+            tiro2.y += 10; // Ajuste para desvio vertical
             tiro3.y -= 10;
 
             allShots.push(tiro1, tiro2, tiro3);
-            kill.play();
         } else {
             console.log("💥 Tiro normal!");
             let tiro = new Shot(cheese, shotImg);
             allShots.push(tiro);
-            kill.play();
         }
 
+        kill.play();
         balaRestante--;
         atualizarPlacarBalas();
     } else if (balaRestante === 0 && !recarregando) {
