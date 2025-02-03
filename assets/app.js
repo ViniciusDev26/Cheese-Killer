@@ -512,3 +512,13 @@ setTimeout(() => {
     cheese.imune = false;
     console.log("❌ Imunidade desativada!");
 }, 5000);
+
+if(this.tipo === "tiro-triplo") {
+    console.log("🔥 Ativando tiro triplo!");
+    cheese.tiroTriploAtivo = true;  // Ativa o tiro triplo
+
+    setTimeout(() => {
+        cheese.tiroTriploAtivo = false;  // Desativa o tiro triplo após o tempo
+        console.log("❌ Tiro triplo desativado!");
+    }, 5000);  // 5 segundos de tiro triplo
+}
