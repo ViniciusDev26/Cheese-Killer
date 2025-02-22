@@ -1,47 +1,56 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cheese Game</title>
     <style>
-        *{
-            text-align: center;
-        }
-        .first-tela{
-            margin-top: 200px;
-        }
-        body{
-            background-image: url('https://static.vecteezy.com/ti/vetor-gratis/p1/7201452-padrao-de-fundo-de-queijo-vetor.jpg');
-            background-size: cover;
-        }
-        .set{
-            padding: 10px;
-           
-        }
-        .set a{
-            text-decoration: none;
-            list-style-type: none;
-            padding: 10px;
-            background-color: yellow;
-            border-radius: 10px;
-            color: black;
-        }
-        .set a:hover{
-            background-color: rgb(211, 211, 36);
-        }
-        
-
+      * {
+        text-align: center;
+      }
+      body {
+        background-image: url("https://static.vecteezy.com/ti/vetor-gratis/p1/7201452-padrao-de-fundo-de-queijo-vetor.jpg");
+        background-size: cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+      .container {
+        padding: 4em 6em;
+        position: relative;
+        background: rgba(0, 0, 0, 0.2);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        margin: 7px;
+        border: 1px solid transparent;
+        border-radius: 10px;
+      }
+      .set {
+        padding: 10px;
+      }
+      .set a {
+        text-decoration: none;
+        list-style-type: none;
+        padding: 10px;
+        background-color: yellow;
+        border-radius: 10px;
+        color: black;
+      }
+      .set a:hover {
+        background-color: rgb(211, 211, 36);
+      }
     </style>
-</head>
-<body>
-    <div class="first-tela">
-        <h1>🔫🧀🥵WELCOME TO CHEESE KILLER 🔫🧀🥵</h1>
+  </head>
+  <body>
+    <div class="container">
+      <div class="first-tela">
+        <h1>🔫🧀🥵welcome to cheese killer 🔫🧀🥵</h1>
+      </div>
+      <div class="set">
+        <a href="game.html">start</a>
+        <a href="ranking.html">ranking</a>
+      </div>
     </div>
-    <div class="set">
-        <a href="game.html">START</a>
-        <a href="ranking.html">RANKING</a>
-    </div>
-
-</body>
+  </body>
 </html>
