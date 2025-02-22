@@ -150,7 +150,7 @@ class PowerUps extends Sprite {
             this.applyInvincibiliy(jogador, this.duracao);
         } else if (this.tipo === "tiroTriplo") {
             this.applyTripleShot(jogador, this.duracao);
-        } else if (this.tipo === "pontuacao-extra") {
+        } else if (this.tipo === "extraPoints") {
             this.applyExtraPoints(jogador);
         }
 
@@ -411,7 +411,7 @@ setInterval(aumentarInimigos, 1000);
 
 const imagensPowerUp = {
     imunidade: "image/imunidade-removebg-preview.png",
-    dobro: "image/dobro-removebg-preview.png",
+    extraPoints: "image/dobro-removebg-preview.png",
     tiroTriplo: "image/tiro-triplo-removebg-preview.png",
 };
 
