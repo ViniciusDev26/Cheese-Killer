@@ -18,17 +18,26 @@ let recarregando = false; // Estado para verificar se o jogador está recarregan
 
 const ALTURA_JOGO = 300;
 const LARGURA_JOGO = 700;
-const ding = new Audio();
-ding.src = "sounds/784428__erokia__msfxp13-43_3-ambient-90-bpm.wav";
-ding.preload = "auto";
 
-const death = new Audio();
-death.src = "sounds/506587__mrthenoronha__kill-enemy-2-8-bit.wav";
-death.preload = "auto";
+function makeSounds() {
+    const ding = new Audio();
+    ding.src = "sounds/784428__erokia__msfxp13-43_3-ambient-90-bpm.wav";
+    ding.preload = "auto";
 
-const kill = new Audio();
-kill.src = "sounds/506585__mrthenoronha__kill-enemy-4-8-bit.wav";
-kill.preload = "auto";
+    const death = new Audio();
+    death.src = "sounds/506587__mrthenoronha__kill-enemy-2-8-bit.wav";
+    death.preload = "auto";
+
+    const kill = new Audio();
+    kill.src = "sounds/506585__mrthenoronha__kill-enemy-4-8-bit.wav";
+    kill.preload = "auto";
+
+    return {
+        kill,
+        death,
+        ding,
+    };
+}
 
 class Sprite {
     constructor(x, y, largura, altura, imagem) {
@@ -280,8 +289,8 @@ function verificaColision() {
             if (tiroAtingiuMeteoro) {
                 tiro.podeSerDestruido = true;
                 meteoro.destruir();
-                death.currentTime = 0; // Reinicia o áudio para o início
-                death.play();
+                makeSounds().death.currentTime = 0; // Reinicia o áudio para o início
+                makeSounds().death.play();
                 count++;
                 placar.innerText = count;
                 if (count % 30 === 0) {
@@ -348,7 +357,7 @@ function darTiro() {
             cheeseShot();
         }
 
-        kill.play();
+        makeSounds().kill.play();
         balaRestante--;
         atualizarPlacarBalas();
     } else if (balaRestante === 0 && !recarregando) {
