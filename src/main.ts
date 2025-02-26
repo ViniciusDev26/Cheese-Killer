@@ -2,22 +2,29 @@ import { getGameConfig } from "./config";
 import { Meteoro } from "./elements/Meteor";
 import { Player, type Power } from "./elements/Player";
 import { PowerUps } from "./elements/PowerUp";
+import { Score } from "./elements/Score";
 import { Shot } from "./elements/Shot";
+import { LifeView } from "./views/LifeView";
+import { ScoreView } from "./views/ScoreView";
+
+const config = getGameConfig();
 
 let tempo = 0;
 const tempoJogo = document.querySelector(".tempo");
 
-const nomeJogador = prompt("Digite seu nome");
-const player = document.querySelector("#player");
+const playerName = prompt("Digite seu nome") as string;
+const player = document.querySelector("#player") as HTMLElement;
+player.innerHTML = playerName;
 
-if (!player) throw new Error("Elemento #player não encontrado!");
+const cheese = new Player(playerName, config.images.elements.imagem);
+const lifeView = new LifeView(document.querySelector(".vida") as HTMLElement);
+cheese.life.subscribe(lifeView);
 
-player.innerHTML = nomeJogador as string;
-
-const placar = document.querySelector(".pontuacao");
-const vidas = document.querySelector(".vida");
-let count = 0;
-let countLife = 3;
+const score = new Score();
+const scoreView = new ScoreView(
+	document.querySelector(".pontuacao") as HTMLElement,
+);
+score.subscribe(scoreView);
 
 let balaRestante = 20;
 const maxBalas = 20;
@@ -25,11 +32,8 @@ let recarregando = false;
 
 const canvasEl = document.querySelector("#game") as HTMLCanvasElement;
 const ctx = canvasEl.getContext("2d") as CanvasRenderingContext2D;
-const config = getGameConfig();
 
 ctx.imageSmoothingEnabled = false;
-
-const cheese = new Player(config.images.elements.imagem);
 
 const allMeteor: Meteoro[] = [];
 let allShots: Shot[] = [];
@@ -93,14 +97,10 @@ function verificaCollision() {
 		if (atingiuCheese) {
 			if (!cheese.powerStatus.invincibility) {
 				meteoros.destruir();
-				const pain = new Audio();
-				pain.src = "sounds/29617__erdie__pain-male2.ogg";
-				pain.preload = "auto";
-				pain.play();
-				countLife--;
-				vidas.innerHTML = countLife;
+				config.sounds.pain.play();
+				cheese.life.removeOneLife();
 
-				if (countLife <= 0) {
+				if (cheese.life.isDead) {
 					reiniciarJogo();
 					break;
 				}
@@ -116,11 +116,8 @@ function verificaCollision() {
 				meteoro.destruir();
 				config.sounds.death.currentTime = 0;
 				config.sounds.death.play();
-				count++;
-				placar.innerText = count;
-				if (count % 30 === 0) {
-					meteoro.speedX *= 2.0;
-				}
+				score.addPoints(1);
+				// TODO: Add meteor speed increase each 30 seconds
 			}
 		}
 	}
@@ -129,10 +126,8 @@ function verificaCollision() {
 function reiniciarJogo() {
 	fimDoJogo();
 	allPowerUp = [];
-	countLife = 3;
-	count = 0;
-	vidas.innerHTML = countLife;
-	placar.innerText = count;
+	cheese.life.reset();
+	score.reset();
 
 	for (const meteor of allMeteor) {
 		meteor.destruir();
@@ -207,15 +202,20 @@ function salvarDados() {
 	localStorage.setItem("pontos", count);
 }
 
-function salvarPontuacao(nome, pontos) {
-	const ranking = JSON.parse(localStorage.getItem("ranking")) || [];
-	ranking.push({ nome, pontos });
-	ranking.sort((a, b) => b.pontos - a.pontos);
+interface RankingItem {
+	name: string;
+	score: number;
+}
+function salvarPontuacao(name: string, score: number) {
+	const ranking: RankingItem[] =
+		JSON.parse(localStorage.getItem("ranking") ?? "") || [];
+	ranking.push({ name, score });
+	ranking.sort((a, b) => b.score - a.score);
 	localStorage.setItem("ranking", JSON.stringify(ranking));
 }
 
 function fimDoJogo() {
-	salvarPontuacao(nomeJogador, count);
+	salvarPontuacao(playerName, score.points);
 	alert("Pontuação salva, confira no ranking!");
 	window.location.href = "ranking.html";
 }
