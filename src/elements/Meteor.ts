@@ -1,7 +1,7 @@
 import { getGameConfig } from "../config";
 import { Sprite } from "./Sprite";
 
-export class Meteoro extends Sprite {
+export class Meteor extends Sprite {
 	public speedX: number;
 
 	constructor(meteoroImg: CanvasImageSource) {

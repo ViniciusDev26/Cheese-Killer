@@ -1,9 +1,10 @@
 import { getGameConfig } from "./config";
-import { Meteoro } from "./elements/Meteor";
+import { Meteor } from "./elements/Meteor";
 import { Player, type Power } from "./elements/Player";
 import { PowerUps } from "./elements/PowerUp";
 import { Score } from "./elements/Score";
 import { Shot } from "./elements/Shot";
+import { AmmoView } from "./views/AmmoView";
 import { LifeView } from "./views/LifeView";
 import { ScoreView } from "./views/ScoreView";
 
@@ -18,7 +19,12 @@ player.innerHTML = playerName;
 
 const cheese = new Player(playerName, config.images.elements.imagem);
 const lifeView = new LifeView(document.querySelector(".vida") as HTMLElement);
+const ammoView = new AmmoView(
+	document.querySelector(".allBalas") as HTMLElement,
+);
+
 cheese.life.subscribe(lifeView);
+cheese.weapon.subscribe(ammoView);
 
 const score = new Score();
 const scoreView = new ScoreView(
@@ -26,21 +32,17 @@ const scoreView = new ScoreView(
 );
 score.subscribe(scoreView);
 
-let balaRestante = 20;
-const maxBalas = 20;
-let recarregando = false;
-
 const canvasEl = document.querySelector("#game") as HTMLCanvasElement;
 const ctx = canvasEl.getContext("2d") as CanvasRenderingContext2D;
 
 ctx.imageSmoothingEnabled = false;
 
-const allMeteor: Meteoro[] = [];
+const allMeteor: Meteor[] = [];
 let allShots: Shot[] = [];
 let allPowerUp: PowerUps[] = [];
 
 function createMeteor() {
-	const meteoro = new Meteoro(config.images.elements.meteoroImg);
+	const meteoro = new Meteor(config.images.elements.meteoroImg);
 	allMeteor.push(meteoro);
 }
 
@@ -53,22 +55,22 @@ config.images.elements.imagem.addEventListener("load", () => {
 });
 
 canvasEl.addEventListener("mousemove", (e) => {
-	cheese.coordinates.x = e.offsetX - cheese.largura / 2;
-	cheese.coordinates.y = e.offsetY - cheese.altura / 2;
+	cheese.coordinates.x = e.offsetX - cheese.width / 2;
+	cheese.coordinates.y = e.offsetY - cheese.height / 2;
 	desenhaJogo();
 });
 
 function desenhaJogo() {
 	ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
 
-	cheese.desenha(ctx);
+	cheese.draw(ctx);
 
-	for (const meteoros of allMeteor) {
-		meteoros.desenha(ctx);
+	for (const meteor of allMeteor) {
+		meteor.draw(ctx);
 	}
 
 	for (const shot of allShots) {
-		shot.desenha(ctx);
+		shot.draw(ctx);
 	}
 
 	desenharPowerUps();
@@ -159,7 +161,8 @@ function cheeseShot(shift_y?: number) {
 }
 
 function darTiro() {
-	if (balaRestante > 0 && !recarregando) {
+	const shot = cheese.weapon.shot();
+	if (shot) {
 		if (cheese.powerStatus.tripleShot) {
 			cheeseShot();
 			cheeseShot(10);
@@ -169,10 +172,6 @@ function darTiro() {
 		}
 
 		config.sounds.kill.play();
-		balaRestante--;
-		atualizarPlacarBalas();
-	} else if (balaRestante === 0 && !recarregando) {
-		iniciarRecarga();
 	}
 }
 
@@ -183,30 +182,15 @@ document.body.addEventListener("keydown", (e) => {
 	}
 });
 
-function atualizarPlacarBalas() {
-	const placarBalas = document.querySelector(".allBalas");
-	placarBalas.innerText = balaRestante;
-}
-
-function iniciarRecarga() {
-	recarregando = true;
-
-	setTimeout(() => {
-		balaRestante = maxBalas;
-		recarregando = false;
-		atualizarPlacarBalas();
-	}, 2000);
-}
-
 function salvarDados() {
-	localStorage.setItem("pontos", count);
+	localStorage.setItem("pontos", score.points.toString());
 }
 
 interface RankingItem {
 	name: string;
 	score: number;
 }
-function salvarPontuacao(name: string, score: number) {
+function saveRecord(name: string, score: number) {
 	const ranking: RankingItem[] =
 		JSON.parse(localStorage.getItem("ranking") ?? "") || [];
 	ranking.push({ name, score });
@@ -215,7 +199,7 @@ function salvarPontuacao(name: string, score: number) {
 }
 
 function fimDoJogo() {
-	salvarPontuacao(playerName, score.points);
+	saveRecord(playerName, score.points);
 	alert("Pontuação salva, confira no ranking!");
 	window.location.href = "ranking.html";
 }

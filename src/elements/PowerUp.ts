@@ -51,15 +51,15 @@ export class PowerUps extends Sprite {
 	}
 
 	desenhar(ctx: CanvasRenderingContext2D) {
-		super.desenha(ctx);
+		super.draw(ctx);
 	}
 
 	colidiuCom(jogador: Sprite) {
 		return (
-			jogador.coordinates.x < this.coordinates.x + this.largura &&
-			jogador.coordinates.x + jogador.largura > this.coordinates.x &&
-			jogador.coordinates.y < this.coordinates.y + this.altura &&
-			jogador.coordinates.y + jogador.altura > this.coordinates.y
+			jogador.coordinates.x < this.coordinates.x + this.width &&
+			jogador.coordinates.x + jogador.width > this.coordinates.x &&
+			jogador.coordinates.y < this.coordinates.y + this.height &&
+			jogador.coordinates.y + jogador.height > this.coordinates.y
 		);
 	}
 }

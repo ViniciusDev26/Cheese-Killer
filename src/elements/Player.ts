@@ -1,10 +1,12 @@
 import { Life } from "./Player/Life";
+import { Weapon } from "./Player/Weapon";
 import { Sprite } from "./Sprite";
 
 export class Player extends Sprite {
 	private powers: ActivePowers;
 	private _life: Life;
 	private _score: number;
+	private _weapon: Weapon;
 
 	constructor(
 		private readonly name: string,
@@ -14,6 +16,7 @@ export class Player extends Sprite {
 		this.powers = {};
 		this._life = new Life(3);
 		this._score = 0;
+		this._weapon = new Weapon(20, 2000);
 	}
 
 	applyPower(power: Power, duration: number) {
@@ -44,6 +47,10 @@ export class Player extends Sprite {
 
 	get life() {
 		return this._life;
+	}
+
+	get weapon() {
+		return this._weapon;
 	}
 }
 
